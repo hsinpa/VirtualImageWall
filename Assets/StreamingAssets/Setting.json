@@ -1,0 +1,7 @@
+{
+	"root_folder" : "E:/Unity/VirtualImageWall/Assets/StreamingAssets/TestImageFolder",
+	"desire_rows" : 4,
+	"desire_columns" : 5,
+	"card_width" : 150,
+	"card_height" : 200
+}
