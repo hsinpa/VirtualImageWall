@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Utility;
 
 public class MainApp : MonoBehaviour
 {
@@ -12,6 +13,12 @@ public class MainApp : MonoBehaviour
     [SerializeField]
     private PrizeDrawModule prizeDrawModule;
 
+    [SerializeField]
+    private TextureUtility textureUtility;
+
+
+    private FileUtility fileUtility;
+
     public void Start() {
         SettingData settingData = ParseSettingData();
 
@@ -21,8 +28,14 @@ public class MainApp : MonoBehaviour
         Debug.Log("settingData desire_columns " + settingData.desire_columns);
         Debug.Log("settingData desire_rows " + settingData.desire_rows);
 
+
+
         if (!string.IsNullOrEmpty(settingData.root_folder)) {
-            virtualImageWall.SetUp(settingData.card_width, settingData.card_height, settingData.desire_rows, settingData.desire_columns);
+            fileUtility = new FileUtility();
+            fileUtility.SetTargetFolder(settingData.root_folder);
+
+
+            virtualImageWall.SetUp(textureUtility, fileUtility, settingData);
             virtualImageWall.Display(true);
         }
     }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465782, g: 0.49641252, b: 0.5748167, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -149,8 +149,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4.0000014, y: 0}
-  m_SizeDelta: {x: -8, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &754125728
 MonoBehaviour:
@@ -202,9 +202,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIHolder: {fileID: 754125727}
-  ImageCardPrefab: {fileID: 8473582237261970648, guid: 556c3f8abc0fc8649b0c16b56a5e046e,
+  ImageCardPrefab: {fileID: 7684226583326245783, guid: 556c3f8abc0fc8649b0c16b56a5e046e,
     type: 3}
   CycleTime: 0
+  LineSpace: 20
 --- !u!225 &754125731
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -447,6 +448,7 @@ GameObject:
   - component: {fileID: 2015575701}
   - component: {fileID: 2015575700}
   - component: {fileID: 2015575699}
+  - component: {fileID: 2015575704}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -468,6 +470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   virtualImageWall: {fileID: 754125730}
   prizeDrawModule: {fileID: 0}
+  textureUtility: {fileID: 2015575704}
 --- !u!114 &2015575700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -548,6 +551,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &2015575704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015575698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6eb5375f4070e47a9304178f27aa52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &9187291502716512727
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -664,6 +679,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 965796457003274988, guid: 556c3f8abc0fc8649b0c16b56a5e046e,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 556c3f8abc0fc8649b0c16b56a5e046e, type: 3}
