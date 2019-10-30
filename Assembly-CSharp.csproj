@@ -70,6 +70,7 @@
     <Compile Include="Assets\Script\PrizeDrawModule.cs" />
     <Compile Include="Assets\Script\Utility\EventFlag.cs" />
     <Compile Include="Assets\Script\Utility\FileUtility.cs" />
+    <Compile Include="Assets\Script\Utility\Pooling\PoolManager.cs" />
     <Compile Include="Assets\Script\Utility\TextureUtility.cs" />
     <Compile Include="Assets\Script\Utility\UtilityMethod.cs" />
     <Compile Include="Assets\Script\VirtualImageWallModule.cs" />

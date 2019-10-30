@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utility;
 using UnityEngine.UI;
+using DG.Tweening;
+using Pooling;
 
 public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 {
@@ -30,14 +32,20 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
     private FileUtility fileUtility;
 
+    private System.Action EventImageWallShowComplete;
+
     public void Display(bool isOn)
     {
         canvasGroup.alpha = (isOn) ? 1 : 0;
 
         if (isOn)
         {
-            GenerateImageWall();
+            EventImageWallShowComplete += OnImageWallShowComplete;
 
+            GenerateImageWall();
+        }
+        else {
+            EventImageWallShowComplete -= OnImageWallShowComplete;
         }
     }
 
@@ -52,12 +60,16 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         imagecard_list = new List<ImageCard>();
         canvasGroup = GetComponent<CanvasGroup>();
 
+        int queueLength = 100;
+        PoolManager.instance.CreatePool(ImageCardPrefab.gameObject, PoolingID.ImageCard, queueLength);
+
+
         UtilityMethod.ClearChildObject(UIHolder);
     }
 
     private void GenerateImageWall() {
         _ScreenSize = new Vector2(Screen.width, Screen.height );
-        Vector2 cardSize = ImageCardPrefab.rectTransform.rect.size;
+        Vector2 cardSize = new Vector2(card_width, card_height);
 
         Debug.Log("_ScreenSize " + _ScreenSize);
 
@@ -75,7 +87,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
             for (int y = 0; y < maxCardRow; y++)
             {
                 ImageCard g_card = GetImageCard();
-                float delayTime = Random.Range(0.1f, 1f);
+                float delayTime = Random.Range(0.1f, 0.8f);
                 float posX = startX + (cardSize.x * x) + (x * LineSpace), posY = startY - (cardSize.y * y) - (y * LineSpace);
                 FileUtility.ImageData randomImage = fileUtility.GetRandomImage();
 
@@ -85,27 +97,72 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
                 }
             }
         }
+
+        UtilityMethod.DoDelayWork(1, () =>
+        {
+            OnImageWallShowComplete();
+        });
     }
 
-    private void PrintImageOnScreen(float delayTime, float posX, float posY, FileUtility.ImageData imageData, ImageCard imageCard) {
+    private async void PrintImageOnScreen(float delayTime, float posX, float posY, FileUtility.ImageData imageData, ImageCard imageCard) {
         imageCard.rectTransform.anchoredPosition = new Vector2(posX, posY);
         imageCard.rawImage.enabled = false;
+        imageCard.rawImage.color = new Color(1, 1, 1, 0);
 
-        textureUtility.GetTexture(imageData.url, (Texture texture) =>
+        await UtilityMethod.DoDelayWork(delayTime, () =>
         {
-            imageCard.rawImage.enabled = true;
-            imageCard.rawImage.texture = texture;
+            textureUtility.GetTexture(imageData.url, (Texture texture) =>
+            {
+                imageCard.rawImage.enabled = true;
+                imageCard.rawImage.texture = texture;
+
+                imageCard.rawImage.DOFade(1, 0.4f);
+            });
+        });
+
+ 
+    }
+
+    private void FadeOutImages() {
+        ImageCard[] images = transform.GetComponentsInChildren<ImageCard>();
+        int imageLength = images.Length;
+
+        for (int i = 0; i < imageLength; i++) {
+            float delayTime = Random.Range(0.1f, 0.8f);
+            FadeSingleImage(delayTime, images[i]);
+        }
+
+        UtilityMethod.DoDelayWork(0.8f, () =>
+        {
+            GenerateImageWall();
+        });
+
+    }
+
+    private async void FadeSingleImage(float delayTime, ImageCard imageCard) {
+
+        Vector2 targetPos = Vector2.zero;
+
+        await UtilityMethod.DoDelayWork(delayTime, () =>
+        {
+            imageCard.DORestart();
+            imageCard.rawImage.DOFade(0, 0.4f);
+            imageCard.rectTransform.DOAnchorPos(targetPos, 0.4f);
         });
     }
 
     private ImageCard GetImageCard() {
-        ImageCard imageCard = UtilityMethod.CreateObjectToParent(UIHolder, ImageCardPrefab.gameObject).GetComponent<ImageCard>();
+        ImageCard imageCard = PoolManager.instance.ReuseObject(PoolingID.ImageCard).GetComponent<ImageCard>();
+        
+        UtilityMethod.InsertObjectToParent(transform, imageCard.gameObject);
 
         return imageCard;
     }
 
-
-    
-
-
+    private void OnImageWallShowComplete() {
+        UtilityMethod.DoDelayWork(CycleTime, () =>
+        {
+            FadeOutImages();
+        });
+    }
 }

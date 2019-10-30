@@ -8,12 +8,7 @@ public class General {
 }
 
 public class PoolingID {
-	public const int TerrainPlain = 10001;
-	public const int TerrainTrain = 10003;
-	public const int TerrainRoad = 10002;
-
-	public const int ObstacleTree = 20001;
-	public const int ObstacleItems = 20001;
+	public const string ImageCard = "pooling@imagecard";
 }
 
 

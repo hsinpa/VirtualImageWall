@@ -40,14 +40,20 @@ namespace Utility {
         /// <returns></returns>
         public static GameObject CreateObjectToParent(Transform parent, GameObject prefab) {
             GameObject item = GameObject.Instantiate(prefab);
+
+            return InsertObjectToParent(parent, item);
+        }
+
+        public static GameObject InsertObjectToParent(Transform parent, GameObject item)
+        {
             item.transform.SetParent(parent);
             item.transform.localScale = Vector3.one;
-			item.transform.position = new Vector3(item.transform.position.x, item.transform.position.y, 1);
-			item.transform.localPosition = new Vector3( 0, 0, 1);
+            item.transform.position = new Vector3(item.transform.position.x, item.transform.position.y, 1);
+            item.transform.localPosition = new Vector3(0, 0, 1);
             return item;
         }
 
-		public static GameObject FindObject(GameObject parent, string name) {
+        public static GameObject FindObject(GameObject parent, string name) {
 		     Transform[] trs= parent.GetComponentsInChildren<Transform>(true);
 		     foreach(Transform t in trs){
 		         if(t.name == name){
@@ -155,6 +161,12 @@ namespace Utility {
             return p_default;
         }
 
+        public static async Task DoDelayWork(float p_delay, System.Action p_action)
+        {
+            await Task.Delay(System.TimeSpan.FromSeconds(p_delay));
 
+            if (p_action != null)
+                p_action();
+        }
     }
 }
