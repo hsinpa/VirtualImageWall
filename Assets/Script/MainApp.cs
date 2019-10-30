@@ -25,10 +25,6 @@ public class MainApp : MonoBehaviour
         Debug.Log("settingData root_folder " + settingData.root_folder);
         Debug.Log("settingData card_height " + settingData.card_height);
         Debug.Log("settingData card_width " + settingData.card_width);
-        Debug.Log("settingData desire_columns " + settingData.desire_columns);
-        Debug.Log("settingData desire_rows " + settingData.desire_rows);
-
-
 
         if (!string.IsNullOrEmpty(settingData.root_folder)) {
             fileUtility = new FileUtility();

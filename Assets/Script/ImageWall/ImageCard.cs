@@ -13,4 +13,6 @@ public class ImageCard : MonoBehaviour
 
     public Text company_title;
 
+    public Utility.FileUtility.ImageData imageData;
+
 }

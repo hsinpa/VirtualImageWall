@@ -28,9 +28,19 @@ namespace Utility
             int random_companyIndex = Random.Range(0, keyCount);
             string key = imageDict.Keys.ElementAt(random_companyIndex);
 
-            if (imageDict.TryGetValue(key, out List<ImageData> imageData)) {
-                int image_index = Random.Range(0, imageData.Count);
-                return imageData.ElementAt(image_index);
+            if (imageDict.TryGetValue(key, out List<ImageData> imageDataList)) {
+
+                imageDataList = imageDataList.FindAll(x => !x.is_display);
+
+                int image_index = Random.Range(0, imageDataList.Count);
+                if (image_index <= 0)
+                    return GetRandomImage();
+
+                ImageData imageData = imageDataList.ElementAt(image_index);
+
+                ReturnImageData(imageData, true);
+
+                return imageData;
             }
 
             return default(ImageData);
@@ -41,7 +51,6 @@ namespace Utility
 
             if (!string.IsNullOrEmpty(company) && imageDict.TryGetValue(company, out List<ImageData> imageData))
             {
-
                 imageData = imageData.FindAll(x => x.is_picked == isPick);
                 int image_index = Random.Range(0, imageData.Count);
                 return imageData.ElementAt(image_index);
@@ -50,8 +59,17 @@ namespace Utility
             return default(ImageData);
         }
 
+        public void ReturnImageData(ImageData imageData, bool isDisplay) {
 
-        private void LoadAllImagesFromFolder() {
+            if (imageDict.TryGetValue(imageData.company_name, out List<ImageData> data_list)) {
+                ImageData tempData = data_list[imageData.index];
+                tempData.is_display = isDisplay;
+
+                data_list[imageData.index] = tempData;
+            }
+        }
+
+        public void LoadAllImagesFromFolder() {
             string[] raw_files = GetDirFiles(_rootpath);
 
             if (raw_files != null && raw_files.Length > 0)
@@ -75,7 +93,12 @@ namespace Utility
                 imageDict.Add(imageData.company_name, new List<ImageData>());
             }
 
-            imageDict[imageData.company_name].Add(imageData);
+            if (imageDict[imageData.company_name].Count(x => x.url == imageData.url) == 0) {
+                int imageIndex = imageDict[imageData.company_name].Count;
+                imageData.index = imageIndex;
+
+                imageDict[imageData.company_name].Add(imageData);
+            }
         }
 
         private string[] GetDirFiles(string targetFolder) {
@@ -125,12 +148,15 @@ namespace Utility
         }
 
         public struct ImageData {
+            public int index;
+
             public string company_name;
             public string title_name;
             public string url;
 
             public bool is_picked;
             public bool is_display;
+            public bool is_not_exist;
         }
 
 

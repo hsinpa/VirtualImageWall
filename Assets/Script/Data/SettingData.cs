@@ -7,8 +7,8 @@ public struct SettingData
 {
     public string root_folder;
 
-    public int desire_rows;
-    public int desire_columns;
+    public int image_wall_cycle_time;
+    public int image_wall_space;
 
     public int card_width;
     public int card_height;

@@ -14,17 +14,24 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
     [SerializeField]
     private ImageCard ImageCardPrefab;
 
-    [SerializeField]
     private int CycleTime;
 
-    [SerializeField]
     private int LineSpace;
+
+    [SerializeField]
+    private Animator logo_holo_animator;
+
+    [SerializeField]
+    private float fadeInOutTime = 0.4f;
+
+    [SerializeField, Range(0.1f, 1)]
+    private float maxPerImageDelayTime = 0.8f;
 
     private Vector2 _ScreenSize;
 
     private CanvasGroup canvasGroup;
 
-    private int card_width, card_height, desire_row, desire_column;
+    private int card_width, card_height;
 
     private List<ImageCard> imagecard_list;
 
@@ -54,13 +61,13 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         this.fileUtility = fileUtility;
         this.card_width = settingData.card_width;
         this.card_height = settingData.card_height;
-        this.desire_row = settingData.desire_rows;
-        this.desire_column = settingData.desire_columns;
+        this.CycleTime = settingData.image_wall_cycle_time;
+        this.LineSpace = settingData.image_wall_space;
 
         imagecard_list = new List<ImageCard>();
         canvasGroup = GetComponent<CanvasGroup>();
 
-        int queueLength = 100;
+        int queueLength = 150;
         PoolManager.instance.CreatePool(ImageCardPrefab.gameObject, PoolingID.ImageCard, queueLength);
 
 
@@ -68,6 +75,10 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
     }
 
     private void GenerateImageWall() {
+
+        //Find if any new image is being added
+        fileUtility.LoadAllImagesFromFolder();
+
         _ScreenSize = new Vector2(Screen.width, Screen.height );
         Vector2 cardSize = new Vector2(card_width, card_height);
 
@@ -87,18 +98,19 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
             for (int y = 0; y < maxCardRow; y++)
             {
                 ImageCard g_card = GetImageCard();
-                float delayTime = Random.Range(0.1f, 0.8f);
+                float delayTime = Random.Range(0.1f, maxPerImageDelayTime);
                 float posX = startX + (cardSize.x * x) + (x * LineSpace), posY = startY - (cardSize.y * y) - (y * LineSpace);
                 FileUtility.ImageData randomImage = fileUtility.GetRandomImage();
 
                 if (FileUtility.IsImageValid(randomImage)) {
                     //imagecard_list.Add(g_card);
+                    g_card.imageData = randomImage;
                     PrintImageOnScreen(delayTime, posX, posY, randomImage, g_card);
                 }
             }
         }
 
-        UtilityMethod.DoDelayWork(1, () =>
+        _ = UtilityMethod.DoDelayWork(maxPerImageDelayTime + 0.1f, () =>
         {
             OnImageWallShowComplete();
         });
@@ -116,7 +128,9 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
                 imageCard.rawImage.enabled = true;
                 imageCard.rawImage.texture = texture;
 
-                imageCard.rawImage.DOFade(1, 0.4f);
+                imageCard.rawImage.DOFade(1, fadeInOutTime);
+
+                fileUtility.ReturnImageData(imageCard.imageData, false);
             });
         });
 
@@ -128,15 +142,22 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         int imageLength = images.Length;
 
         for (int i = 0; i < imageLength; i++) {
-            float delayTime = Random.Range(0.1f, 0.8f);
+            float delayTime = Random.Range(0.1f, maxPerImageDelayTime);
             FadeSingleImage(delayTime, images[i]);
         }
 
-        UtilityMethod.DoDelayWork(0.8f, () =>
+        //Call Brink animation
+        _ = UtilityMethod.DoDelayWork(maxPerImageDelayTime, () =>
         {
-            GenerateImageWall();
+            logo_holo_animator.SetTrigger("Brink");
         });
 
+        //Call Regenerate image wall
+        int animationTime = 2;
+        _ = UtilityMethod.DoDelayWork(animationTime + maxPerImageDelayTime, () =>
+          {
+              GenerateImageWall();
+          });
     }
 
     private async void FadeSingleImage(float delayTime, ImageCard imageCard) {
@@ -146,8 +167,12 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         await UtilityMethod.DoDelayWork(delayTime, () =>
         {
             imageCard.DORestart();
-            imageCard.rawImage.DOFade(0, 0.4f);
-            imageCard.rectTransform.DOAnchorPos(targetPos, 0.4f);
+            imageCard.rawImage.DOFade(0, fadeInOutTime);
+            imageCard.rectTransform.DOAnchorPos(targetPos, fadeInOutTime).OnComplete(()=> {
+                imageCard.rawImage.enabled = false;
+
+                PoolManager.instance.Destroy(imageCard.gameObject);
+            });
         });
     }
 
@@ -160,7 +185,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
     }
 
     private void OnImageWallShowComplete() {
-        UtilityMethod.DoDelayWork(CycleTime, () =>
+        _ = UtilityMethod.DoDelayWork(CycleTime, () =>
         {
             FadeOutImages();
         });
