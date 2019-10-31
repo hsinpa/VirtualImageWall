@@ -37,9 +37,10 @@ namespace Utility
             LoadAllImagesFromFolder();
         }
 
-        public ImageData GetRandomImage(bool recordDisplay) {
+        public ImageData GetRandomImage(bool recordDisplay, int draw_time = 0) {
             int keyCount = imageDict.Count;
             int random_companyIndex = Random.Range(0, keyCount);
+            int maxDrawTime = 10;
             //Debug.Log(random_companyIndex);
 
             string key = imageDict.Keys.ElementAt(random_companyIndex);
@@ -49,15 +50,19 @@ namespace Utility
                 imageDataList = imageDataList.FindAll(x => !x.is_display);
 
                 int image_index = Random.Range(0, imageDataList.Count);
-                if (image_index <= 0)
-                    return GetRandomImage(recordDisplay);
+                if (image_index <= 0 && draw_time < maxDrawTime) {
+                    draw_time += 1;
+                    return GetRandomImage(recordDisplay, draw_time);
+                }
 
-                ImageData imageData = imageDataList.ElementAt(image_index);
+                if (imageDataList.Count > 0) {
+                    ImageData imageData = imageDataList.ElementAt(image_index);
 
-                if (recordDisplay)
-                    MarkImageVisibility(imageData, true);
+                    if (recordDisplay)
+                        MarkImageVisibility(imageData, true);
 
-                return imageData;
+                    return imageData;
+                }
             }
 
             return default(ImageData);

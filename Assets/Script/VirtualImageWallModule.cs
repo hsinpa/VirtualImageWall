@@ -8,6 +8,8 @@ using Pooling;
 
 public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 {
+    RectTransform rectTransform;
+
     [SerializeField]
     private RectTransform UIHolder;
 
@@ -59,12 +61,22 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
     }
 
     public void SetUp(TextureUtility textureUtility, FileUtility fileUtility, SettingData settingData) {
+        rectTransform = GetComponent<RectTransform>();
+
+        _ScreenSize = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
+
         this.textureUtility = textureUtility;
         this.fileUtility = fileUtility;
         this.card_width = settingData.card_width;
         this.card_height = settingData.card_height;
         this.CycleTime = settingData.image_wall_cycle_time;
         this.LineSpace = settingData.image_wall_space;
+        //this.LineSpace = 0;
+
+        Debug.Log("rectTransform " + rectTransform.sizeDelta);
+        Debug.Log("rectTransform " + rectTransform.rect);
+
+        ImageCardPrefab.rectTransform.sizeDelta = new Vector2(this.card_width, this.card_height);
 
         imagecard_list = new List<ImageCard>();
         canvasGroup = GetComponent<CanvasGroup>();
@@ -84,17 +96,16 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         //Find if any new image is being added
         fileUtility.LoadAllImagesFromFolder();
 
-        _ScreenSize = new Vector2(Screen.width, Screen.height );
+        //_ScreenSize = new Vector2(Screen.width, Screen.height );
         Vector2 cardSize = new Vector2(card_width, card_height);
 
         Debug.Log("_ScreenSize " + _ScreenSize);
 
-        int maxCardCol = Mathf.CeilToInt(_ScreenSize.x / cardSize.x);
-        int maxCardRow = Mathf.CeilToInt(_ScreenSize.y / cardSize.y);
+        int maxCardCol = Mathf.FloorToInt((_ScreenSize.x + LineSpace )/ cardSize.x) -1;
+        int maxCardRow = Mathf.FloorToInt((_ScreenSize.y + LineSpace) / cardSize.y);
         float centerX = 0, centerY = 0;
         float startX = centerX - ((maxCardCol - 1) * cardSize.x * 0.5f + ((maxCardCol - 1) * LineSpace * 0.5f)),
               startY = centerY + ((maxCardRow - 1) * cardSize.y * 0.5f + ((maxCardRow - 1) * LineSpace * 0.5f));
-
 
         Debug.Log("maxCardCol " + maxCardCol + ", maxCardRow" + maxCardRow);
         Debug.Log("maxCardWidth " + (maxCardCol * cardSize.x) + ", maxCardHeight" + (maxCardRow * cardSize.y));

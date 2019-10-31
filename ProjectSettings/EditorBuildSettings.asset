@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/PictureWallDemostate.unity
+    guid: 0156b818fd3013d409229d9e9582311e
   m_configObjects: {}

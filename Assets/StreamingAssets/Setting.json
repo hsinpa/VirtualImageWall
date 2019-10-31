@@ -1,7 +1,11 @@
 {
-	"root_folder" : "D:\\Unity\\VirtualImageWall\\Assets\\StreamingAssets\\TestImageFolder",
+	"root_folder" : "E:\\Unity\\VirtualImageWall\\Assets\\StreamingAssets\\TestImageFolder",
+
 	"image_wall_cycle_time" : 6,
 	"image_wall_space" : 15,
 	"card_width" : 150,
-	"card_height" : 200
+	"card_height" : 200,
+
+	"draw_flip_period" : "0.15",
+	"draw_flip_num" : 15
 }

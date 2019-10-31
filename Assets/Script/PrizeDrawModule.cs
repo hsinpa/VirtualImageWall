@@ -16,9 +16,6 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
     [SerializeField]
     private Text CompanyNameText;
 
-    [SerializeField, Range(1, 5)]
-    private float DrawTime = 4;
-
     private CanvasGroup canvasGroup;
 
     private int CompanyCount;
@@ -105,8 +102,9 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
         {
             _fileUtility.MarkPrizeDrawPrivilege(picked_imageData, true);
 
-            int total_generate_num = 15;
-            float period = 0.15f;
+            int total_generate_num = _settingData.draw_flip_num;
+            float period = _settingData.draw_flip_period;
+
             float totalTime = (total_generate_num * period) + period;
 
             RandomGenerateImage(imageCard, key, total_generate_num, period, 0);
@@ -116,6 +114,9 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
                 SetImageCard(imageCard, picked_imageData);
                 callback();
             });
+        } else
+        {
+            callback();
         }
     }
 
