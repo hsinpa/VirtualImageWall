@@ -148,9 +148,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
                 fileUtility.MarkImageVisibility(imageCard.imageData, false);
             });
-        });
-
- 
+        }); 
     }
 
     private void FadeOutImages() {
