@@ -11,7 +11,17 @@ public class PoolingID {
 	public const string ImageCard = "pooling@imagecard";
 }
 
+public class InputEvent {
+    //Draw
+    public const UnityEngine.KeyCode DrawAll = UnityEngine.KeyCode.Alpha1;
+    public const UnityEngine.KeyCode DrawLeft = UnityEngine.KeyCode.Alpha2;
+    public const UnityEngine.KeyCode DrawRight = UnityEngine.KeyCode.Alpha3;
+    public const UnityEngine.KeyCode ChangeCompanyLeft = UnityEngine.KeyCode.LeftArrow;
+    public const UnityEngine.KeyCode ChangeCompanyRight = UnityEngine.KeyCode.RightArrow;
 
+    //General
+    public const UnityEngine.KeyCode SwitchMode = UnityEngine.KeyCode.Space;
+}
 
 public class EventFlag {
 

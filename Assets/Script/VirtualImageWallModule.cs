@@ -41,6 +41,8 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
     private System.Action EventImageWallShowComplete;
 
+    public bool isEnable { get { return canvasGroup.alpha == 1; } }
+
     public void Display(bool isOn)
     {
         canvasGroup.alpha = (isOn) ? 1 : 0;
@@ -76,6 +78,9 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
     private void GenerateImageWall() {
 
+        if (!isEnable)
+            return;
+
         //Find if any new image is being added
         fileUtility.LoadAllImagesFromFolder();
 
@@ -84,8 +89,8 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
         Debug.Log("_ScreenSize " + _ScreenSize);
 
-        int maxCardCol = Mathf.RoundToInt(_ScreenSize.x / cardSize.x);
-        int maxCardRow = Mathf.RoundToInt(_ScreenSize.y / cardSize.y);
+        int maxCardCol = Mathf.CeilToInt(_ScreenSize.x / cardSize.x);
+        int maxCardRow = Mathf.CeilToInt(_ScreenSize.y / cardSize.y);
         float centerX = 0, centerY = 0;
         float startX = centerX - ((maxCardCol - 1) * cardSize.x * 0.5f + ((maxCardCol - 1) * LineSpace * 0.5f)),
               startY = centerY + ((maxCardRow - 1) * cardSize.y * 0.5f + ((maxCardRow - 1) * LineSpace * 0.5f));
@@ -100,7 +105,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
                 ImageCard g_card = GetImageCard();
                 float delayTime = Random.Range(0.1f, maxPerImageDelayTime);
                 float posX = startX + (cardSize.x * x) + (x * LineSpace), posY = startY - (cardSize.y * y) - (y * LineSpace);
-                FileUtility.ImageData randomImage = fileUtility.GetRandomImage();
+                FileUtility.ImageData randomImage = fileUtility.GetRandomImage(true);
 
                 if (FileUtility.IsImageValid(randomImage)) {
                     //imagecard_list.Add(g_card);
@@ -130,7 +135,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
                 imageCard.rawImage.DOFade(1, fadeInOutTime);
 
-                fileUtility.ReturnImageData(imageCard.imageData, false);
+                fileUtility.MarkImageVisibility(imageCard.imageData, false);
             });
         });
 
@@ -138,6 +143,9 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
     }
 
     private void FadeOutImages() {
+        if (!isEnable)
+            return;
+
         ImageCard[] images = transform.GetComponentsInChildren<ImageCard>();
         int imageLength = images.Length;
 
@@ -185,6 +193,9 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
     }
 
     private void OnImageWallShowComplete() {
+        if (!isEnable)
+            return;
+
         _ = UtilityMethod.DoDelayWork(CycleTime, () =>
         {
             FadeOutImages();

@@ -16,7 +16,6 @@ public class MainApp : MonoBehaviour
     [SerializeField]
     private TextureUtility textureUtility;
 
-
     private FileUtility fileUtility;
 
     public void Start() {
@@ -32,7 +31,10 @@ public class MainApp : MonoBehaviour
 
 
             virtualImageWall.SetUp(textureUtility, fileUtility, settingData);
+            prizeDrawModule.SetUp(textureUtility, fileUtility, settingData);
+
             virtualImageWall.Display(true);
+            prizeDrawModule.Display(false);
         }
     }
 
@@ -46,4 +48,17 @@ public class MainApp : MonoBehaviour
         return default(SettingData);
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(InputEvent.SwitchMode)) {
+            if (prizeDrawModule.isEnable) {
+                prizeDrawModule.Display(false);
+                virtualImageWall.Display(true);
+            }
+            else {
+                prizeDrawModule.Display(true);
+                virtualImageWall.Display(false);
+            }
+        }
+    }
 }

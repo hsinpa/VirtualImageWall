@@ -1,5 +1,5 @@
 {
-	"root_folder" : "E:\\Unity\\VirtualImageWall\\Assets\\StreamingAssets\\TestImageFolder",
+	"root_folder" : "D:\\Unity\\VirtualImageWall\\Assets\\StreamingAssets\\TestImageFolder",
 	"image_wall_cycle_time" : 6,
 	"image_wall_space" : 15,
 	"card_width" : 150,

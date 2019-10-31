@@ -103,7 +103,6 @@ namespace Utility {
 			return new Vector3( target_value / p_vector3.x, target_value / p_vector3.y, target_value / p_vector3.z );
 		}
 
-
 		 public static T SafeDestroy<T>(T obj) where T : Object {
 			if (Application.isEditor)
 				Object.DestroyImmediate(obj);

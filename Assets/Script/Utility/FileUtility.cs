@@ -16,6 +16,20 @@ namespace Utility
         //Company name, Image url list
         private Dictionary<string, List<ImageData>> imageDict = new Dictionary<string, List<ImageData>>();
 
+        public int CompanyCount {
+            get {
+                return imageDict.Keys.Count;
+            }
+        }
+
+        public string GetCompanykeyByIndex(int keyIndex)
+        {
+            if (keyIndex < 0 || keyIndex > imageDict.Keys.Count)
+                return null;
+
+            return imageDict.Keys.ElementAt(keyIndex);
+        }
+
         public void SetTargetFolder(string targetFolder) {
             imageDict.Clear();
             _rootpath = targetFolder;
@@ -23,9 +37,11 @@ namespace Utility
             LoadAllImagesFromFolder();
         }
 
-        public ImageData GetRandomImage() {
+        public ImageData GetRandomImage(bool recordDisplay) {
             int keyCount = imageDict.Count;
             int random_companyIndex = Random.Range(0, keyCount);
+            //Debug.Log(random_companyIndex);
+
             string key = imageDict.Keys.ElementAt(random_companyIndex);
 
             if (imageDict.TryGetValue(key, out List<ImageData> imageDataList)) {
@@ -34,11 +50,12 @@ namespace Utility
 
                 int image_index = Random.Range(0, imageDataList.Count);
                 if (image_index <= 0)
-                    return GetRandomImage();
+                    return GetRandomImage(recordDisplay);
 
                 ImageData imageData = imageDataList.ElementAt(image_index);
 
-                ReturnImageData(imageData, true);
+                if (recordDisplay)
+                    MarkImageVisibility(imageData, true);
 
                 return imageData;
             }
@@ -46,20 +63,36 @@ namespace Utility
             return default(ImageData);
         }
 
-        public ImageData GetRandomImageByTag(string company, bool isPick)
+        public ImageData GetRandomImageByTag(string company, bool notPickBefore)
         {
 
             if (!string.IsNullOrEmpty(company) && imageDict.TryGetValue(company, out List<ImageData> imageData))
             {
-                imageData = imageData.FindAll(x => x.is_picked == isPick);
-                int image_index = Random.Range(0, imageData.Count);
-                return imageData.ElementAt(image_index);
+                if (notPickBefore)
+                    imageData = imageData.FindAll(x => !x.is_picked);
+
+                int imageDataCount = imageData.Count;
+                int image_index = Random.Range(0, imageDataCount);
+
+                if (image_index >= 0 && imageDataCount > 0)
+                    return imageData.ElementAt(image_index);
             }
 
             return default(ImageData);
         }
 
-        public void ReturnImageData(ImageData imageData, bool isDisplay) {
+        public void MarkPrizeDrawPrivilege(ImageData imageData, bool is_picked)
+        {
+            if (imageDict.TryGetValue(imageData.company_name, out List<ImageData> data_list))
+            {
+                ImageData tempData = data_list[imageData.index];
+                tempData.is_picked = is_picked;
+
+                data_list[imageData.index] = tempData;
+            }
+        }
+
+        public void MarkImageVisibility(ImageData imageData, bool isDisplay) {
 
             if (imageDict.TryGetValue(imageData.company_name, out List<ImageData> data_list)) {
                 ImageData tempData = data_list[imageData.index];
@@ -93,11 +126,15 @@ namespace Utility
                 imageDict.Add(imageData.company_name, new List<ImageData>());
             }
 
-            if (imageDict[imageData.company_name].Count(x => x.url == imageData.url) == 0) {
+            if (imageDict[imageData.company_name].Count(x => x.url == imageData.url) == 0)
+            {
                 int imageIndex = imageDict[imageData.company_name].Count;
                 imageData.index = imageIndex;
 
                 imageDict[imageData.company_name].Add(imageData);
+            }
+            else {
+                MarkImageVisibility(imageData , false);
             }
         }
 

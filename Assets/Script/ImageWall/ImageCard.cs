@@ -15,4 +15,10 @@ public class ImageCard : MonoBehaviour
 
     public Utility.FileUtility.ImageData imageData;
 
+    public void Reset()
+    {
+        rawImage.enabled = false;
+        personnel_title.text = "";
+        company_title.text = "";
+    }
 }

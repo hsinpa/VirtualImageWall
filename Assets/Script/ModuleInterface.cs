@@ -4,5 +4,7 @@ using UnityEngine;
 
 public interface ModuleInterface
 {
+    bool isEnable { get; }
+
     void Display(bool isOn);
 }
