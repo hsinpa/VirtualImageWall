@@ -167,5 +167,27 @@ namespace Utility {
             if (p_action != null)
                 p_action();
         }
+
+        public static async Task DoDelayWork(float p_delay, System.Action p_action, System.Threading.CancellationToken cancelTask)
+        {
+
+            try
+            {
+                await Task.Delay(System.TimeSpan.FromSeconds(p_delay), cancelTask);
+
+                if (p_action != null)
+                    p_action();
+
+            }
+            // *** If cancellation is requested, an OperationCanceledException results.
+            catch (System.OperationCanceledException)
+            {
+                Debug.Log("System.OperationCanceledException : Cancel");
+            }
+            catch (System.Exception)
+            {
+                Debug.Log("System.Exception : Cancel");
+            }
+        }
     }
 }

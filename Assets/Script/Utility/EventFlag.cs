@@ -23,7 +23,12 @@ public class InputEvent {
     public const UnityEngine.KeyCode SwitchMode = UnityEngine.KeyCode.Space;
 }
 
+
 public class EventFlag {
+    public class Animation {
+        public const string Blink = "Blink";
+        public const string Reset = "Reset";
+    }
 
     public class Game
     {

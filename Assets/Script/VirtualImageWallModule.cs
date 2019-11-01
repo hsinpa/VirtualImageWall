@@ -5,6 +5,7 @@ using Utility;
 using UnityEngine.UI;
 using DG.Tweening;
 using Pooling;
+using System.Threading.Tasks;
 
 public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 {
@@ -45,24 +46,35 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
     public bool isEnable { get { return canvasGroup.alpha == 1; } }
 
+    System.Threading.CancellationTokenSource cancelToken;
+
     public void Display(bool isOn)
     {
         canvasGroup.alpha = (isOn) ? 1 : 0;
 
         if (isOn)
         {
+            cancelToken = new System.Threading.CancellationTokenSource();
+
+            logo_holo_animator.SetTrigger(EventFlag.Animation.Reset);
+
             EventImageWallShowComplete += OnImageWallShowComplete;
 
             GenerateImageWall();
         }
         else {
+            logo_holo_animator.SetTrigger(EventFlag.Animation.Reset);
+            Debug.Log("Reset");
+            cancelToken.Cancel();
+            cancelToken.Dispose();
+            cancelToken = null;
+
             EventImageWallShowComplete -= OnImageWallShowComplete;
         }
     }
 
     public void SetUp(TextureUtility textureUtility, FileUtility fileUtility, SettingData settingData) {
         rectTransform = GetComponent<RectTransform>();
-
         _ScreenSize = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
 
         this.textureUtility = textureUtility;
@@ -126,10 +138,10 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
             }
         }
 
-        _ = UtilityMethod.DoDelayWork(maxPerImageDelayTime + 0.1f, () =>
+        var task = UtilityMethod.DoDelayWork(maxPerImageDelayTime + 0.1f, () =>
         {
             OnImageWallShowComplete();
-        });
+        }, cancelToken.Token);
     }
 
     private async void PrintImageOnScreen(float delayTime, float posX, float posY, FileUtility.ImageData imageData, ImageCard imageCard) {
@@ -141,6 +153,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         {
             textureUtility.GetTexture(imageData.url, (Texture texture) =>
             {
+                if (imageCard == null) return;
                 imageCard.rawImage.enabled = true;
                 imageCard.rawImage.texture = texture;
 
@@ -148,7 +161,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
                 fileUtility.MarkImageVisibility(imageCard.imageData, false);
             });
-        }); 
+        }, cancelToken.Token); 
     }
 
     private void FadeOutImages() {
@@ -166,15 +179,15 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         //Call Brink animation
         _ = UtilityMethod.DoDelayWork(maxPerImageDelayTime, () =>
         {
-            logo_holo_animator.SetTrigger("Brink");
-        });
+            logo_holo_animator.SetTrigger(EventFlag.Animation.Blink);
+        }, cancelToken.Token);
 
         //Call Regenerate image wall
         int animationTime = 2;
         _ = UtilityMethod.DoDelayWork(animationTime + maxPerImageDelayTime, () =>
-          {
-              GenerateImageWall();
-          });
+        {
+            GenerateImageWall();
+        }, cancelToken.Token);
     }
 
     private async void FadeSingleImage(float delayTime, ImageCard imageCard) {
@@ -190,7 +203,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
                 PoolManager.instance.Destroy(imageCard.gameObject);
             });
-        });
+        }, cancelToken.Token);
     }
 
     private ImageCard GetImageCard() {
@@ -208,6 +221,6 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         _ = UtilityMethod.DoDelayWork(CycleTime, () =>
         {
             FadeOutImages();
-        });
+        }, cancelToken.Token);
     }
 }
