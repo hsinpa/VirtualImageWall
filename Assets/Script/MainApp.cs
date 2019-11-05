@@ -60,5 +60,9 @@ public class MainApp : MonoBehaviour
                 virtualImageWall.Display(false);
             }
         }
+
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            Time.timeScale = 0;
     }
 }

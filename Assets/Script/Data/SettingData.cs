@@ -13,6 +13,9 @@ public struct SettingData
     public int card_width;
     public int card_height;
 
+    public int max_row;
+    public int max_column;
+
     public float draw_flip_period;
     public int draw_flip_num;
 }

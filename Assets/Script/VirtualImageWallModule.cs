@@ -19,7 +19,7 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
     private int CycleTime;
 
-    private int LineSpace;
+    private int LineSpace, MaxColumn, MaxRow;
 
     [SerializeField]
     private Animator logo_holo_animator;
@@ -83,6 +83,8 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
         this.card_height = settingData.card_height;
         this.CycleTime = settingData.image_wall_cycle_time;
         this.LineSpace = settingData.image_wall_space;
+        this.MaxColumn = settingData.max_column;
+        this.MaxRow = settingData.max_row;
         //this.LineSpace = 0;
 
         Debug.Log("rectTransform " + rectTransform.sizeDelta);
@@ -95,7 +97,6 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
         int queueLength = 150;
         PoolManager.instance.CreatePool(ImageCardPrefab.gameObject, PoolingID.ImageCard, queueLength);
-
 
         UtilityMethod.ClearChildObject(UIHolder);
     }
@@ -115,6 +116,10 @@ public class VirtualImageWallModule : MonoBehaviour, ModuleInterface
 
         int maxCardCol = Mathf.FloorToInt((_ScreenSize.x + LineSpace )/ cardSize.x) -1;
         int maxCardRow = Mathf.FloorToInt((_ScreenSize.y + LineSpace) / cardSize.y);
+
+        maxCardCol = Mathf.Clamp(maxCardCol, maxCardCol, this.MaxColumn);
+        maxCardRow = Mathf.Clamp(maxCardRow, maxCardRow, this.MaxRow);
+
         float centerX = 0, centerY = 0;
         float startX = centerX - ((maxCardCol - 1) * cardSize.x * 0.5f + ((maxCardCol - 1) * LineSpace * 0.5f)),
               startY = centerY + ((maxCardRow - 1) * cardSize.y * 0.5f + ((maxCardRow - 1) * LineSpace * 0.5f));

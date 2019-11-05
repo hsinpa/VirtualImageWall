@@ -45,21 +45,31 @@ namespace Utility
 
             string key = imageDict.Keys.ElementAt(random_companyIndex);
 
-            if (imageDict.TryGetValue(key, out List<ImageData> imageDataList)) {
+            if (imageDict.TryGetValue(key, out List<ImageData> rawImageDataList)) {
 
-                imageDataList = imageDataList.FindAll(x => !x.is_display);
+                var filterImageDataList = rawImageDataList.FindAll(x => !x.is_display);
+                int rawImageCount = rawImageDataList.Count;
+                int filterImageCount = filterImageDataList.Count;
 
-                int image_index = Random.Range(0, imageDataList.Count);
+                int image_index = Random.Range(0, filterImageCount);
                 if (image_index <= 0 && draw_time < maxDrawTime) {
                     draw_time += 1;
                     return GetRandomImage(recordDisplay, draw_time);
                 }
 
-                if (imageDataList.Count > 0) {
-                    ImageData imageData = imageDataList.ElementAt(image_index);
+                if (filterImageCount > 0) {
+                    ImageData imageData = filterImageDataList.ElementAt(image_index);
 
                     if (recordDisplay)
                         MarkImageVisibility(imageData, true);
+
+                    return imageData;
+                }
+
+                if (rawImageCount > 0)
+                {
+                    int raw_image_index = Random.Range(0, rawImageCount);
+                    ImageData imageData = rawImageDataList.ElementAt(raw_image_index);
 
                     return imageData;
                 }
