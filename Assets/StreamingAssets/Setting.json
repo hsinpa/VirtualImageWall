@@ -8,6 +8,6 @@
 	"max_row" : 3,
 	"max_column" : 9,
 
-	"draw_flip_period" : "0.15",
+	"draw_flip_period" : 0.15,
 	"draw_flip_num" : 15
 }
