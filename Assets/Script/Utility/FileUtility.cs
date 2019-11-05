@@ -11,7 +11,7 @@ namespace Utility
     public class FileUtility
     {
         private string _rootpath;
-        private HashSet<string> allow_file_format = new HashSet<string> { "png", "jpg", "jpeg"};
+        private HashSet<string> allow_file_format = new HashSet<string> { "png", "jpg", "jpeg" };
 
         //Company name, Image url list
         private Dictionary<string, List<ImageData>> imageDict = new Dictionary<string, List<ImageData>>();
@@ -35,6 +35,22 @@ namespace Utility
             _rootpath = targetFolder;
 
             LoadAllImagesFromFolder();
+        }
+
+        public async void RefreshImageRecordDisplay() {
+
+            if (imageDict == null) return;
+
+            await Task.Run(() =>
+            {
+                foreach (KeyValuePair<string, List<ImageData>> CompanyItem in imageDict) {
+                    int imageCount = CompanyItem.Value.Count;
+                    for (int i = 0; i < imageCount; i++)
+                    {
+                        MarkImageVisibility(CompanyItem.Value[i], false);
+                    }
+                }
+            });
         }
 
         public ImageData GetRandomImage(bool recordDisplay, int draw_time = 0) {

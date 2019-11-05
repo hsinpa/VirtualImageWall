@@ -6,6 +6,11 @@ using Utility;
 
 public class MainApp : MonoBehaviour
 {
+    [SerializeField]
+    private ImageCard ImageCardPrefab;
+
+    [SerializeField]
+    private StagnateWallModule stagnateWallModule;
 
     [SerializeField]
     private VirtualImageWallModule virtualImageWall;
@@ -25,17 +30,27 @@ public class MainApp : MonoBehaviour
         Debug.Log("settingData card_height " + settingData.card_height);
         Debug.Log("settingData card_width " + settingData.card_width);
 
+        SetPooling(settingData);
+
         if (!string.IsNullOrEmpty(settingData.root_folder)) {
             fileUtility = new FileUtility();
             fileUtility.SetTargetFolder(settingData.root_folder);
 
-
+            stagnateWallModule.SetUp(textureUtility, fileUtility, settingData);
             virtualImageWall.SetUp(textureUtility, fileUtility, settingData);
             prizeDrawModule.SetUp(textureUtility, fileUtility, settingData);
 
             virtualImageWall.Display(true);
             prizeDrawModule.Display(false);
+            stagnateWallModule.Display(false);
         }
+    }
+
+    private void SetPooling(SettingData setting) {
+        ImageCardPrefab.rectTransform.sizeDelta = new Vector2(setting.card_width, setting.card_height);
+
+        int queueLength = (setting.max_column * setting.max_row * 2);
+        Pooling.PoolManager.instance.CreatePool(ImageCardPrefab.gameObject, PoolingID.ImageCard, queueLength);
     }
 
     private SettingData ParseSettingData() {
@@ -50,7 +65,7 @@ public class MainApp : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(InputEvent.SwitchMode)) {
+        if (Input.GetKeyDown(InputEvent.SwitchMode) && !stagnateWallModule.isEnable) {
             if (prizeDrawModule.isEnable) {
                 prizeDrawModule.Display(false);
                 virtualImageWall.Display(true);
@@ -61,8 +76,19 @@ public class MainApp : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(InputEvent.StagnateScene) && !prizeDrawModule.isEnable) {
+            if (!stagnateWallModule.isEnable)
+            {
+                virtualImageWall.Display(false);
+                prizeDrawModule.Display(false);
+                stagnateWallModule.Display(true);
+            }
+            else {
+                virtualImageWall.Display(true);
+                prizeDrawModule.Display(false);
+                stagnateWallModule.Display(false);
+            }
+        }
 
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-            Time.timeScale = 0;
     }
 }

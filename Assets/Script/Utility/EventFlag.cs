@@ -21,6 +21,8 @@ public class InputEvent {
 
     //General
     public const UnityEngine.KeyCode SwitchMode = UnityEngine.KeyCode.Space;
+    public const UnityEngine.KeyCode StagnateScene = UnityEngine.KeyCode.Alpha0;
+
 }
 
 
@@ -28,6 +30,7 @@ public class EventFlag {
     public class Animation {
         public const string Blink = "Blink";
         public const string Reset = "Reset";
+        public const string Stagnate = "Stagnate";
     }
 
     public class Game
