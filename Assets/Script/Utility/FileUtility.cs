@@ -199,12 +199,12 @@ namespace Utility
             {
                 string[] split = filename.Split(new string[] { "_" }, System.StringSplitOptions.RemoveEmptyEntries);
 
-                if (split.Length == 3) {
-                    int formatIndex = split[2].LastIndexOf(".");
+                if (split.Length == 4) {
+                    int formatIndex = split[3].LastIndexOf(".");
 
                     imageData.url = full_path;
                     imageData.company_name = split[0];
-                    imageData.title_name = split[2].Substring(0, formatIndex);
+                    imageData.title_name = split[3].Substring(0, formatIndex);
                 }
             }
 

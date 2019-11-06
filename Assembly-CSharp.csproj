@@ -67,6 +67,7 @@
     <Compile Include="Assets\Script\ModuleInterface.cs" />
     <Compile Include="Assets\Script\PrizeDrawModule.cs" />
     <Compile Include="Assets\Script\StagnateWallModule.cs" />
+    <Compile Include="Assets\Script\StaticBackgroundModule.cs" />
     <Compile Include="Assets\Script\Utility\EventFlag.cs" />
     <Compile Include="Assets\Script\Utility\FileUtility.cs" />
     <Compile Include="Assets\Script\Utility\Pooling\PoolManager.cs" />

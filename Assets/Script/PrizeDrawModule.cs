@@ -16,6 +16,9 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
     [SerializeField]
     private Text CompanyNameText;
 
+    [SerializeField]
+    private RawImage PeopleWallBG;
+
     private CanvasGroup canvasGroup;
 
     private int CompanyCount;
@@ -43,6 +46,11 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
 
         LeftImageCard.Reset();
         RightImageCard.Reset();
+
+        _textureUtility.GetTexture(settingData.lucky_draw_background, (Texture t) =>
+        {
+            PeopleWallBG.texture = t;
+        });
     }
 
     public void Display(bool isOn)

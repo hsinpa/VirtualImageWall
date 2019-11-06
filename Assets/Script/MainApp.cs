@@ -19,6 +19,9 @@ public class MainApp : MonoBehaviour
     private PrizeDrawModule prizeDrawModule;
 
     [SerializeField]
+    private StaticBackgroundModule staticBackground;
+
+    [SerializeField]
     private TextureUtility textureUtility;
 
     private FileUtility fileUtility;
@@ -39,10 +42,12 @@ public class MainApp : MonoBehaviour
             stagnateWallModule.SetUp(textureUtility, fileUtility, settingData);
             virtualImageWall.SetUp(textureUtility, fileUtility, settingData);
             prizeDrawModule.SetUp(textureUtility, fileUtility, settingData);
+            staticBackground.SetUp();
 
             virtualImageWall.Display(true);
             prizeDrawModule.Display(false);
             stagnateWallModule.Display(false);
+            staticBackground.Display(false);
         }
     }
 
@@ -57,7 +62,7 @@ public class MainApp : MonoBehaviour
         string settingPath = Application.streamingAssetsPath + "/Setting.json";
 
         if (File.Exists(settingPath)) {
-            return JsonUtility.FromJson<SettingData>( File.ReadAllText(settingPath) );
+            return JsonUtility.FromJson<SettingData>(File.ReadAllText(settingPath));
         }
 
         return default(SettingData);
@@ -67,28 +72,67 @@ public class MainApp : MonoBehaviour
     {
         if (Input.GetKeyDown(InputEvent.SwitchMode) && !stagnateWallModule.isEnable) {
             if (prizeDrawModule.isEnable) {
-                prizeDrawModule.Display(false);
-                virtualImageWall.Display(true);
+                CloseAllExcept(virtualImageWall);
+
+                //prizeDrawModule.Display(false);
+                //virtualImageWall.Display(true);
             }
             else {
-                prizeDrawModule.Display(true);
-                virtualImageWall.Display(false);
+                CloseAllExcept(prizeDrawModule);
+
+                //prizeDrawModule.Display(true);
+                //virtualImageWall.Display(false);
             }
         }
 
         if (Input.GetKeyDown(InputEvent.StagnateScene) && !prizeDrawModule.isEnable) {
             if (!stagnateWallModule.isEnable)
             {
-                virtualImageWall.Display(false);
-                prizeDrawModule.Display(false);
-                stagnateWallModule.Display(true);
+                CloseAllExcept(stagnateWallModule);
+
+                //virtualImageWall.Display(false);
+                //prizeDrawModule.Display(false);
+                //stagnateWallModule.Display(true);
             }
             else {
-                virtualImageWall.Display(true);
-                prizeDrawModule.Display(false);
-                stagnateWallModule.Display(false);
+                CloseAllExcept(virtualImageWall);
+
+                //virtualImageWall.Display(true);
+                //prizeDrawModule.Display(false);
+                //stagnateWallModule.Display(false);
+            }
+
+        }
+
+        if (Input.GetKeyDown(InputEvent.StaticBG))
+        {
+
+            if (!staticBackground.isEnable)
+            {
+                CloseAllExcept(staticBackground);
+            }
+            else
+            {
+                CloseAllExcept(virtualImageWall);
             }
         }
 
     }
+
+    private void CloseAllExcept(ModuleInterface exception) {
+        exception.Display(true);
+
+        if (exception.GetType() != virtualImageWall.GetType())
+            virtualImageWall.Display(false);
+
+        if (exception.GetType() != prizeDrawModule.GetType())
+            prizeDrawModule.Display(false);
+
+        if (exception.GetType() != stagnateWallModule.GetType())
+            stagnateWallModule.Display(false);
+
+        if (exception.GetType() != staticBackground.GetType())
+            staticBackground.Display(false);
+    }
+
 }

@@ -22,7 +22,7 @@ public class InputEvent {
     //General
     public const UnityEngine.KeyCode SwitchMode = UnityEngine.KeyCode.Space;
     public const UnityEngine.KeyCode StagnateScene = UnityEngine.KeyCode.Alpha0;
-
+    public const UnityEngine.KeyCode StaticBG = UnityEngine.KeyCode.Alpha9;
 }
 
 
