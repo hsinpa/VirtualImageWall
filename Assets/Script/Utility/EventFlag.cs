@@ -45,4 +45,14 @@ public class EventFlag {
         public const string OnModalOpen = "modal.open@event";
         public const string OnModalClose = "modal.close@event";
     }
+
+    public class CompanyMap {
+        public const string C1_ID = "C1";
+        public const string C2_ID = "C2";
+        public const string C3_ID = "C3";
+
+        public const string C1_Fullname= "惠氏";
+        public const string C2_Fullname = "卡多摩";
+        public const string C3_Fullname = "大樹";
+    }
 }

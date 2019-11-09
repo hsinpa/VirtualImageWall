@@ -32,6 +32,8 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
 
     public bool isEnable {get { return canvasGroup.alpha == 1; }}
 
+    private Dictionary<string, string> CompanynameMapper;
+
     public void SetUp(TextureUtility textureUtility, FileUtility fileUtility, SettingData settingData)
     {
         this._textureUtility = textureUtility;
@@ -51,6 +53,12 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
         {
             PeopleWallBG.texture = t;
         });
+         
+        CompanynameMapper = new Dictionary<string, string>() {
+            {EventFlag.CompanyMap.C1_ID,  EventFlag.CompanyMap.C1_Fullname},
+            {EventFlag.CompanyMap.C2_ID,  EventFlag.CompanyMap.C2_Fullname},
+            {EventFlag.CompanyMap.C3_ID,  EventFlag.CompanyMap.C3_Fullname}
+        };
     }
 
     public void Display(bool isOn)
@@ -68,11 +76,13 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
     private void ChangeCompany(int direction) {
         CompanyIndex += direction;
 
-        if (CompanyIndex >= CompanyCount)
-            CompanyIndex = 0;
+        //if (CompanyIndex >= CompanyCount)
+        //    CompanyIndex = 0;
 
-        if (CompanyIndex < 0)
-            CompanyIndex = CompanyCount - 1;
+        //if (CompanyIndex < 0)
+        //    CompanyIndex = CompanyCount - 1;
+
+        CompanyIndex = Mathf.Clamp(CompanyIndex, 0, CompanyCount-1);
 
         SetCompanyInfo(CompanyIndex);
     }
@@ -150,7 +160,7 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
     private void SetCompanyInfo(int company_index) {
 
         string key = this._fileUtility.GetCompanykeyByIndex(company_index);
-        CompanyNameText.text = key;
+        CompanyNameText.text = GetCompanyFullName(key);
     }
 
     private void SetImageCard(ImageCard imageCard, FileUtility.ImageData imageData) {
@@ -163,8 +173,16 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
             imageCard.rawImage.texture = texture;
         });
 
-        imageCard.company_title.text = imageData.company_name;
+        imageCard.company_title.text = GetCompanyFullName(imageData.company_name);
         imageCard.personnel_title.text = imageData.title_name;
+    }
+
+    private string GetCompanyFullName(string id) {
+        if (CompanynameMapper.TryGetValue(id, out string c_name)) {
+            return c_name;
+        }
+
+        return id;
     }
     #region Input Event
 
