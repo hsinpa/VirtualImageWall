@@ -56,7 +56,7 @@ namespace Utility
         public ImageData GetRandomImage(bool recordDisplay, int draw_time = 0) {
             int keyCount = imageDict.Count;
             int random_companyIndex = Random.Range(0, keyCount);
-            int maxDrawTime = 10;
+            int maxDrawTime = 20;
             //Debug.Log(random_companyIndex);
 
             string key = imageDict.Keys.ElementAt(random_companyIndex);

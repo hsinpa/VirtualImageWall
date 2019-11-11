@@ -44,14 +44,17 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
         canvasGroup = GetComponent<CanvasGroup>();
 
         LeftImageCard.draw_phase.gameObject.SetActive(true);
+        LeftImageCard.background.enabled = true;
+
         RightImageCard.draw_phase.gameObject.SetActive(true);
+        RightImageCard.background.enabled = true;
 
         LeftImageCard.Reset();
         RightImageCard.Reset();
 
-        _textureUtility.GetTexture(settingData.lucky_draw_background, (Texture t) =>
+        _textureUtility.GetTexture(settingData.lucky_draw_background, (Sprite t) =>
         {
-            PeopleWallBG.texture = t;
+            PeopleWallBG.texture = t.texture;
         });
          
         CompanynameMapper = new Dictionary<string, string>() {
@@ -164,13 +167,13 @@ public class PrizeDrawModule : MonoBehaviour, ModuleInterface
     }
 
     private void SetImageCard(ImageCard imageCard, FileUtility.ImageData imageData) {
-        _textureUtility.GetTexture(imageData.url, (Texture texture) =>
+        _textureUtility.GetTexture(imageData.url, (Sprite texture) =>
         {
             if (texture == null)
                 return;
-
+            imageCard.rawImage.preserveAspect = true;
             imageCard.rawImage.enabled = true;
-            imageCard.rawImage.texture = texture;
+            imageCard.rawImage.sprite = texture;
         });
 
         imageCard.company_title.text = GetCompanyFullName(imageData.company_name);

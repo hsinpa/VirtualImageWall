@@ -160,16 +160,20 @@ public class BaseImageWallModule : MonoBehaviour, ModuleInterface
         imageCard.rectTransform.anchoredPosition = new Vector2(posX, posY);
         imageCard.rawImage.enabled = false;
         imageCard.rawImage.color = new Color(1, 1, 1, 0);
+        imageCard.background.color = new Color(imageCard.background.color.r, imageCard.background.color.g, imageCard.background.color.b, 0);
 
         await UtilityMethod.DoDelayWork(delayTime, () =>
         {
-            textureUtility.GetTexture(imageData.url, (Texture texture) =>
+            textureUtility.GetTexture(imageData.url, (Sprite texture) =>
             {
                 if (imageCard == null) return;
+                imageCard.background.enabled = true;
                 imageCard.rawImage.enabled = true;
-                imageCard.rawImage.texture = texture;
+                imageCard.rawImage.sprite = texture;
+                imageCard.rawImage.preserveAspect = true;
 
                 imageCard.rawImage.DOFade(1, fadeInOutTime);
+                imageCard.background.DOFade(1, fadeInOutTime);
 
                 fileUtility.MarkImageVisibility(imageCard.imageData, false);
             });
@@ -214,6 +218,7 @@ public class BaseImageWallModule : MonoBehaviour, ModuleInterface
         await UtilityMethod.DoDelayWork(delayTime, () =>
         {
             imageCard.DORestart();
+            imageCard.background.DOFade(0, fadeInOutTime);
             imageCard.rawImage.DOFade(0, fadeInOutTime);
             imageCard.rectTransform.DOAnchorPos(targetPos, fadeInOutTime).OnComplete(() => {
                 imageCard.rawImage.enabled = false;

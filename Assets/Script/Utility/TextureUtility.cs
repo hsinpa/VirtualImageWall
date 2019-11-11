@@ -5,11 +5,11 @@ using UnityEngine.Networking;
 
 public class TextureUtility : MonoBehaviour
 {
-    private Dictionary<string, Texture> textureDict = new Dictionary<string, Texture>();
+    private Dictionary<string, Sprite> textureDict = new Dictionary<string, Sprite>();
 
-    public void GetTexture(string full_url, System.Action<Texture> callback) {
+    public void GetTexture(string full_url, System.Action<Sprite> callback) {
 
-        if (textureDict.TryGetValue(full_url, out Texture texture)) {
+        if (textureDict.TryGetValue(full_url, out Sprite texture)) {
             if (callback != null)
                 callback(texture);
             return;
@@ -18,7 +18,7 @@ public class TextureUtility : MonoBehaviour
         StartCoroutine(GetText(full_url, callback));
     }
 
-    private IEnumerator GetText(string full_url, System.Action<Texture> callback)
+    private IEnumerator GetText(string full_url, System.Action<Sprite> callback)
     {
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(full_url))
         {
@@ -31,15 +31,17 @@ public class TextureUtility : MonoBehaviour
             else
             {
                 var texture = DownloadHandlerTexture.GetContent(uwr);
+                var texSprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+
 
                 // Get downloaded asset bundle
                 if (!textureDict.ContainsKey(full_url)) {
 
-                    textureDict.Add(full_url, texture);
+                    textureDict.Add(full_url, texSprite);
                 }
 
                 if (callback != null)
-                    callback(texture);
+                    callback(texSprite);
             }
         }
     }

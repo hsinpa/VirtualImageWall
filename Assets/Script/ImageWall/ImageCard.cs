@@ -5,7 +5,9 @@ public class ImageCard : MonoBehaviour
 {
     public RectTransform rectTransform;
 
-    public RawImage rawImage;
+    public Image rawImage;
+
+    public Image background;
 
     public Image draw_phase;
 
